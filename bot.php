@@ -21,7 +21,7 @@ if (!$text){die();}
 //start of code
 //over
 if (substr($text, 0, 5) === "/over" || substr($text, 0, 6) === "/about" || substr($text, 0, 4) === '/dev'){
-	$telegram->sendMessage(array('chat_id' => $chat_id, 'text' => "Bot gemaakt door @notinecrafter (basis voor bot geript van maartenwut). \n\nMet /nieuw <domein> kan je je domein toevoegen, met /verwijder <domein> kan je hem weer verwijderen. Met /domeinen kan je alle domeinen zien. \n\nPraat met @notinecrafter als je directe toegang wilt tot de database."));
+	$telegram->sendMessage(array('chat_id' => $chat_id, 'text' => "Bot gemaakt door @notinecrafter (basis voor bot geript van maartenwut). Opmaak door @EenGebruikersnaam.\n\nMet /nieuw <domein> kan je je domein toevoegen, met /verwijder <domein> kan je hem weer verwijderen. Met /domeinen kan je alle domeinen zien. \n\nPraat met @notinecrafter als je directe toegang wilt tot de database."));
 }
 
 //registrations
