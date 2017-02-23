@@ -22,7 +22,7 @@ if (!$text){die();}
 //over
 if (substr($text, 0, 5) === "/over" || substr($text, 0, 6) === "/about" || substr($text, 0, 4) === '/dev'){
 	$telegram->sendMessage(array('chat_id' => $chat_id, 'text' => "Bot gemaakt door @notinecrafter (basis voor bot geript van maartenwut). \n\nMet /nieuw <domein> kan je je domein toevoegen, met /verwijder <domein> kan je hem weer verwijderen. Met /domeinen kan je alle domeinen zien. \n\nPraat met @notinecrafter als je directe toegang wilt tot de database."));
-} 
+}
 
 //registrations
 else if(substr($text, 0, 17) === "/nieuw@domein_bot" || substr($text, 0, 6) === "/nieuw"){
@@ -40,15 +40,21 @@ else if(substr($text, 0, 17) === "/nieuw@domein_bot" || substr($text, 0, 6) === 
 
 //retrieval
 else if(substr($text, 0, 20) === "/domeinen@domein_bot" || substr($text, 0, 9) === "/domeinen"){
-	$stmt = $conn->prepare("SELECT * FROM domain;");
+	$stmt = $conn->prepare("SELECT * FROM domain ORDER BY user ASC, domain ASC;");
 	$stmt->execute();
 	$domains = $stmt->fetchAll();
+
 	$out = "";
-	foreach($domains as $domain){
-		$out .= $domain["domain"]." (**".$domain["user"]."**)\n";
+	$user = null;
+	foreach ($domains as $d) {
+		if ($d["user"] !== $user) {
+			$user = $d["user"];
+			$out .= "*$user*\n";
+		}
+		$out .= $d["domain"] . "\n";
 	}
+
 	$telegram->sendMessage(array('chat_id' => $chat_id, 'text' => $out, 'parse_mode' => 'Markdown'));
-	
 }
 
 //removal
