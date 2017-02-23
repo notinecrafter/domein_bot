@@ -32,8 +32,11 @@ else if(substr($text, 0, 17) === "/nieuw@domein_bot" || substr($text, 0, 6) === 
 	if(count(explode("." ,$domain)) < 2){
 		$telegram->sendMessage(array('chat_id' => $chat_id, 'text' => $domain." is geen domein gekkie"));
 	}else{
-		$stmt = $conn->prepare("INSERT INTO domain(domain, user) VALUES('$domain', '$user');");
+		$stmt = $conn->prepare("INSERT INTO domain(domain, user) VALUES(:domain, :user);");
+		$stmt->bindParam(":domain", $domain);
+		$stmt->bindParam(":user", $user);
 		$stmt->execute();
+		
 		$telegram->sendMessage(array('chat_id' => $chat_id, 'text' => "$domain geregistreerd voor $user"));
 	}
 }
@@ -70,8 +73,12 @@ else if(substr($text, 0, 20) === "/domeinen@domein_bot" || substr($text, 0, 9) =
 else if (substr($text, 0, 21) === "/verwijder@domein_bot" || substr($text, 0, 10) === "/verwijder"){
 	$domain = explode(" ", $text)[1];
 	$user = $telegram->UserName();
-	$stmt = $conn->prepare("DELETE FROM domain WHERE domain='$domain' AND user='$user';");
+
+	$stmt = $conn->prepare("DELETE FROM domain WHERE domain=:domain AND user=:user;");
+	$stmt->bindParam(":domain", $domain);
+	$stmt->bindParam(":user", $user);
 	$stmt->execute();
+
 	$telegram->sendMessage(array('chat_id' => $chat_id, 'text' => "$domain van $user verwijderd"));
 }
 ?>
