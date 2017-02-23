@@ -61,7 +61,7 @@ else if(substr($text, 0, 20) === "/domeinen@domein_bot" || substr($text, 0, 9) =
 	foreach ($domains as $d) {
 		if ($d["user"] !== $user) {
 			$user = $d["user"];
-			$out .= "*$user*\n";
+			$out .= "*Domeinen van $user:*\n";
 		}
 		$out .= $d["domain"] . "\n";
 	}
