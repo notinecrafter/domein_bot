@@ -50,7 +50,7 @@ else if(substr($text, 0, 20) === "/domeinen@domein_bot" || substr($text, 0, 9) =
 		$stmt = $conn->prepare("SELECT * FROM domain WHERE user=:user ORDER BY domain ASC");
 		$stmt->bindParam(':user', $command[1]);
 	} else {
-		$stmt = $conn->prepare("SELECT * FROM domain ORDER BY user ASC, domain ASC;")
+		$stmt = $conn->prepare("SELECT * FROM domain ORDER BY user ASC, domain ASC;");
 	}
 
 	$stmt->execute();
@@ -61,7 +61,7 @@ else if(substr($text, 0, 20) === "/domeinen@domein_bot" || substr($text, 0, 9) =
 	foreach ($domains as $d) {
 		if ($d["user"] !== $user) {
 			$user = $d["user"];
-			$out .= "*Domeinen van $user:*\n";
+			$out .= "*$user*\n";
 		}
 		$out .= $d["domain"] . "\n";
 	}
@@ -73,12 +73,27 @@ else if(substr($text, 0, 20) === "/domeinen@domein_bot" || substr($text, 0, 9) =
 else if (substr($text, 0, 21) === "/verwijder@domein_bot" || substr($text, 0, 10) === "/verwijder"){
 	$domain = explode(" ", $text)[1];
 	$user = $telegram->UserName();
-
-	$stmt = $conn->prepare("DELETE FROM domain WHERE domain=:domain AND user=:user;");
+	//first check if the user actually has that domain
+	$stmt = $conn->prepare("SELECT * FROM domain WHERE domain=:domain AND user=:user;");
 	$stmt->bindParam(":domain", $domain);
 	$stmt->bindParam(":user", $user);
 	$stmt->execute();
+	$check = $stmt->fetchAll();
+	$verify = 0;
+	foreach($check as $bogus){
+		$verify = 1;
+	}
+	if($verify){
+		$stmt = $conn->prepare("DELETE FROM domain WHERE domain=:domain AND user=:user;");
+		$stmt->bindParam(":domain", $domain);
+		$stmt->bindParam(":user", $user);
+		$stmt->execute();
 
-	$telegram->sendMessage(array('chat_id' => $chat_id, 'text' => "$domain van $user verwijderd"));
+
+		$telegram->sendMessage(array('chat_id' => $chat_id, 'text' => "$domain van $user verwijderd"));
+	}else{
+		$telegram->sendMessage(array('chat_id' => $chat_id, 'text' => "$user, $domain is helemaal niet van jouw..."));
+	}
+
 }
 ?>
